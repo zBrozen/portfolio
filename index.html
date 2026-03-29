@@ -29,7 +29,7 @@
 
             <nav class="header-nav">
                 <!-- Liens sociaux — remplacer les href par vos vraies URL -->
-                <a href="https://github.com/zBrozen" target="_blank" rel="noopener" class="nav-icon-link"
+                <a href="https://github.com/zBrozen" target="_blank" rel="noopener noreferrer" class="nav-icon-link"
                     aria-label="GitHub">
                     <!-- GitHub SVG -->
                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
@@ -39,8 +39,9 @@
                     </svg>
                 </a>
 
-                <!-- Bouton CV/Resume -->
-                <a href="#" class="btn-resume" download aria-label="Télécharger le CV">
+                <!-- Bouton CV/Resume — Remplace 'CV.pdf' par le nom exact de ton fichier dans le dossier data/ -->
+                <a href="data/docs/BABE_ALEXANDRE_CV_2026.pdf" class="btn-resume" download
+                    aria-label="Télécharger le CV">
                     CV
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -95,7 +96,8 @@
 
                 <!-- ── PROJET 1 ── -->
                 <article class="project-card">
-                    <a href="#" class="project-card-link" aria-label="Voir le projet Example Game">
+                    <a href="#" target="_blank" rel="noopener noreferrer" class="project-card-link"
+                        aria-label="Voir le projet">
                         <div class="project-media">
                             <!-- GIF ou image — mettre src="chemin/vers/ton.gif" -->
                             <img src="data/img/DarkChild_Demo.gif" alt="DarkChild Story Illustration" loading="lazy" />
@@ -152,8 +154,7 @@
                 <article class="project-card">
                     <a href="#" class="project-card-link" aria-label="Voir le projet Demo Project">
                         <div class="project-media">
-                            <img src="https://placehold.co/600x340/0d1117/c084fc?text=GIF+ou+Image"
-                                alt="Aperçu du projet Demo Project" loading="lazy" />
+                            <img src="data/img/ClassLab_Demo.gif" alt="ClassLab Illustration" loading="lazy" />
                             <!-- Badge 2D / 3D — changer le texte selon le projet -->
                             <span class="project-dimension-badge">3D</span>
                         </div>
@@ -190,10 +191,13 @@
                                 <h3 class="project-name">ClassLab</h3>
                                 <span class="project-arrow">›</span>
                             </div>
-                            <p class="project-role">3D Artist & Developer</p>
+                            <p class="project-role">Developer, Animator, UI Designer</p>
                             <p class="project-desc">
-                                Description du projet. Mentionner les outils utilisés, l'approche artistique
-                                ou technique, et l'impact du projet.
+                                ClassLab est un projet de jeu sérieux réalisé pour un client (UNIMINUTO) dans
+                                lequel on joue une simulation d'un étudiant professeur qui doit résoudre différents
+                                scénarios. On y retrouve un environnement 3D, de la
+                                scénarisation et des dialogues avec des choix multiples qui ont un impact sur le
+                                déroulement de l'histoire.
                             </p>
                         </div>
                     </a>
