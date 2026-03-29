@@ -1,0 +1,471 @@
+/* =============================================================
+   DESIGN TOKENS & RESET
+   ============================================================= */
+:root {
+  /* Couleurs */
+  --color-bg: #0d0d0f;
+  --color-surface: #141417;
+  --color-surface-2: #1c1c21;
+  --color-border: rgba(255, 255, 255, 0.07);
+  --color-text: #e2e2e8;
+  --color-text-muted: #8888a0;
+  --color-accent: #72a6f4;
+  --color-accent-2: #f4b372;
+  --color-accent-hover: #ffa14e;
+
+  /* Typographie */
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-display: 'Outfit', 'Inter', sans-serif;
+
+  /* Espacements */
+  --space-xs: 0.4rem;
+  --space-sm: 0.75rem;
+  --space-md: 1.25rem;
+  --space-lg: 2rem;
+  --space-xl: 3.5rem;
+  --space-2xl: 6rem;
+
+  /* Rayons */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+
+  /* Transitions */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration: 220ms;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* =============================================================
+   LAYOUT UTILITIES
+   ============================================================= */
+.container {
+  width: 100%;
+  max-width: 75%;
+  margin-inline: auto;
+  padding-inline: var(--space-lg);
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--space-lg);
+  letter-spacing: -0.01em;
+}
+
+/* =============================================================
+   HEADER
+   ============================================================= */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: rgba(13, 13, 15, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: var(--space-md);
+}
+
+/* Identité */
+.header-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.header-name {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-accent-2);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.header-title {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+/* Nav */
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.nav-icon-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  color: var(--color-text-muted);
+  transition: color var(--duration) var(--ease),
+    background-color var(--duration) var(--ease);
+}
+
+.nav-icon-link:hover {
+  color: var(--color-accent-2);
+  background-color: rgba(244, 114, 182, 0.1);
+}
+
+.btn-resume {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text);
+  background-color: transparent;
+  transition: border-color var(--duration) var(--ease),
+    background-color var(--duration) var(--ease),
+    color var(--duration) var(--ease);
+}
+
+.btn-resume:hover {
+  border-color: var(--color-accent-2);
+  color: var(--color-accent-2);
+  background-color: rgba(244, 114, 182, 0.06);
+}
+
+/* =============================================================
+   ABOUT SECTION
+   ============================================================= */
+.about-section {
+  padding-block: var(--space-xl);
+}
+
+.about-inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xl);
+}
+
+/* Avatar circulaire */
+.about-avatar {
+  flex-shrink: 0;
+}
+
+.about-avatar img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--color-surface-2);
+  box-shadow: 0 0 0 1px var(--color-border),
+    0 0 24px rgba(74, 247, 196, 0.12);
+}
+
+/* Texte */
+.about-text {
+  font-size: 1.2rem;
+  line-height: 1.7;
+  color: var(--color-accent-2);
+  font-weight: 400;
+  text-align: justify;
+}
+
+.about-text strong {
+  color: var(--color-accent-2);
+  font-weight: 700;
+}
+
+.about-text em {
+  color: var(--color-accent);
+  font-style: normal;
+}
+
+/* =============================================================
+   PROJECTS SECTION
+   ============================================================= */
+.projects-section {
+  padding-block: var(--space-xl);
+  border-top: 1px solid var(--color-border);
+}
+
+/* Grille responsive : 2 colonnes, 1 sur mobile */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-lg);
+}
+
+@media (max-width: 640px) {
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =============================================================
+   PROJECT CARD
+   ============================================================= */
+.project-card {
+  background-color: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: border-color var(--duration) var(--ease),
+    transform var(--duration) var(--ease),
+    box-shadow var(--duration) var(--ease);
+}
+
+.project-card:hover {
+  border-color: var(--color-accent-hover);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4),
+    0 0 0 1px var(--color-accent-hover);
+}
+
+.project-card-link {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Média (image / GIF) */
+.project-media {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background-color: var(--color-surface-2);
+}
+
+.project-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 400ms var(--ease);
+}
+
+.project-card:hover .project-media img {
+  transform: scale(1.03);
+}
+
+/* Badge 2D / 3D — overlay en haut à droite de l'image */
+.project-dimension-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 7px 13px;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--color-text);
+  background-color: rgba(20, 20, 23, 0.72);
+  border: 2px solid var(--color-border);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  pointer-events: none;
+  transition: border-color var(--duration) var(--ease),
+    color var(--duration) var(--ease);
+}
+
+.project-card:hover .project-dimension-badge {
+  border-color: var(--color-accent-2);
+  color: var(--color-accent-2);
+}
+
+/* Métadonnées (personnes, durée, tech) */
+.project-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background-color: rgba(0, 0, 0, 0.35);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.meta-item svg {
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+/* Infos textuelles du projet */
+.project-info {
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.project-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.project-name {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  line-height: 1.3;
+  transition: color var(--duration) var(--ease);
+}
+
+.project-card:hover .project-name {
+  color: var(--color-accent-hover);
+}
+
+.project-arrow {
+  font-size: 1.4rem;
+  color: var(--color-accent);
+  line-height: 1;
+  transition: transform var(--duration) var(--ease);
+  flex-shrink: 0;
+}
+
+.project-card:hover .project-arrow {
+  transform: translateX(4px);
+}
+
+.project-role {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.project-desc {
+  font-size: 0.88rem;
+  color: var(--color-text);
+  line-height: 1.6;
+  opacity: 0.85;
+}
+
+/* =============================================================
+   SKILLS / TAGS SECTION
+   ============================================================= */
+.skills-section {
+  padding-block: var(--space-xl);
+  border-top: 1px solid var(--color-border);
+}
+
+.skills-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.skill-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  background-color: var(--color-surface);
+  cursor: default;
+  transition: border-color var(--duration) var(--ease),
+    color var(--duration) var(--ease),
+    background-color var(--duration) var(--ease);
+}
+
+.skill-tag:hover {
+  border-color: var(--color-accent-2);
+  color: var(--color-accent-2);
+  background-color: rgba(74, 247, 196, 0.06);
+}
+
+/* =============================================================
+   FOOTER
+   ============================================================= */
+.site-footer {
+  margin-top: var(--space-xl);
+  padding-block: var(--space-lg);
+  border-top: 1px solid var(--color-border);
+  text-align: center;
+}
+
+.site-footer p {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+
+/* =============================================================
+   RESPONSIVE — MOBILE
+   ============================================================= */
+@media (max-width: 600px) {
+  .header-name {
+    font-size: 1.2rem;
+  }
+
+  .about-inner {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--space-lg);
+  }
+
+  .about-text {
+    font-size: 1rem;
+  }
+
+  .about-avatar img {
+    width: 90px;
+    height: 90px;
+  }
+}
