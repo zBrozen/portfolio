@@ -1,0 +1,420 @@
+/**
+ * Logique d'interaction du modal de détails de projet
+ */
+
+document.addEventListener("DOMContentLoaded", () => {
+    const modal = document.getElementById("project-modal");
+    const modalBackdrop = document.getElementById("modal-backdrop");
+    const modalCloseBtn = document.getElementById("modal-close-btn");
+    const modalContent = document.getElementById("modal-content");
+
+    if (!modal || !modalContent) return;
+
+    // Map d'icônes SVG pour les mécaniques
+    const ICONS_MAP = {
+        "shield": `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+        "brush": `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9.06 11.9 8.07-8.06a2.85 2.85 0 1 1 4.03 4.03l-8.06 8.08"/><path d="M7.07 14.94c-1.66 0-3 1.35-3 3.02 0 1.33-2.5 1.52-2 2.02 1.08 1.1 2.49 2.02 4 2.02 2.2 0 4-1.8 4-4.04a3.01 3.01 0 0 0-3-3.02z"/></svg>`,
+        "zap": `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+        "message-square": `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
+        "monitor": `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`,
+        "award": `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>`,
+        "flame": `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 3.5z"/></svg>`,
+        "book-open": `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`,
+        "activity": `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`
+    };
+
+    /**
+     * Ouvre le modal et génère son contenu
+     */
+    function openProjectModal(projectId) {
+        if (typeof PROJECTS_DATA === "undefined") return;
+        const project = PROJECTS_DATA.find(p => p.id === projectId);
+        if (!project) return;
+
+        // Génération du contenu HTML du modal
+        modalContent.innerHTML = renderProjectModalHTML(project);
+
+        // Activation du modal
+        modal.classList.add("active");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("modal-open");
+
+        // Mise à jour de l'URL hash sans défilement brusque
+        if (window.location.hash !== `#${project.id}`) {
+            history.pushState(null, "", `#${project.id}`);
+        }
+
+        // Initialisation de la visionneuse de la galerie
+        initGallery();
+    }
+
+    /**
+     * Ferme le modal et réinitialise l'état
+     */
+    function closeProjectModal() {
+        modal.classList.remove("active");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("modal-open");
+
+        // Met en pause les vidéos actives dans le modal
+        const videos = modalContent.querySelectorAll("video");
+        videos.forEach(v => v.pause());
+
+        // Réinitialise l'URL hash sans rechargement
+        if (window.location.hash) {
+            history.pushState("", document.title, window.location.pathname + window.location.search);
+        }
+    }
+
+    /**
+     * Génère le balisage HTML complet de la fiche projet
+     */
+    function renderProjectModalHTML(project) {
+        const rolesText = project.roles ? project.roles.join(" · ") : "";
+        const techBadges = project.tech
+            ? project.tech.map(t => `<span class="skill-tag">${t}</span>`).join(" ")
+            : "";
+
+        // Génération des paragraphes de l'histoire
+        const storyHTML = project.story
+            ? project.story.map(paragraph => `<p>${paragraph}</p>`).join("")
+            : "";
+
+        // Génération des cartes de mécaniques
+        const mechanicsHTML = project.mechanics
+            ? project.mechanics.map(m => `
+                <div class="mechanic-card">
+                    <div class="mechanic-header">
+                        <div class="mechanic-icon">
+                            ${ICONS_MAP[m.icon] || ICONS_MAP["zap"]}
+                        </div>
+                        <h4 class="mechanic-title">${m.title}</h4>
+                    </div>
+                    <p class="mechanic-desc">${m.desc}</p>
+                </div>
+            `).join("")
+            : "";
+
+        // Données Média Initial (Premier élément de la galerie)
+        const initialMedia = project.gallery && project.gallery.length > 0 ? project.gallery[0] : null;
+
+        // Génération des vignettes de la galerie
+        const galleryThumbsHTML = project.gallery
+            ? project.gallery.map((media, index) => {
+                const isActive = index === 0 ? "active" : "";
+                const isVideo = media.type === "video";
+                const thumbSrc = media.poster || media.src;
+                return `
+                    <button type="button" class="gallery-thumb ${isActive}" data-media-index="${index}" aria-label="Afficher le média ${index + 1}">
+                        <img src="${thumbSrc}" alt="${media.caption || 'Miniature'}" />
+                        ${isVideo ? `
+                            <div class="gallery-thumb-video-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                            </div>
+                        ` : ''}
+                    </button>
+                `;
+            }).join("")
+            : "";
+
+        // Génération des boutons de liens (GitHub, Démo, etc.)
+        let linksHTML = "";
+        if (project.links) {
+            if (project.links.github && project.links.github !== "#") {
+                linksHTML += `
+                    <a href="${project.links.github}" target="_blank" rel="noopener noreferrer" class="btn-project-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                        Code GitHub
+                    </a>
+                `;
+            }
+            if (project.links.demo && project.links.demo !== "#") {
+                linksHTML += `
+                    <a href="${project.links.demo}" target="_blank" rel="noopener noreferrer" class="btn-project-link primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                        Tester la Démo
+                    </a>
+                `;
+            }
+        }
+
+        return `
+            <div class="modal-project-header">
+                <div class="modal-badges-row">
+                    <span class="modal-badge dim-badge">${project.dimension}</span>
+                    <span class="modal-badge">${project.year}</span>
+                    <span class="modal-badge">${project.duration}</span>
+                </div>
+                <h2 class="modal-project-title">${project.title}</h2>
+                <p class="modal-project-tagline">${project.tagline}</p>
+            </div>
+
+            <!-- Métadonnées principales -->
+            <div class="modal-meta-grid">
+                <div class="modal-meta-cell">
+                    <span class="modal-meta-label">Rôles occupés</span>
+                    <span class="modal-meta-value">${rolesText}</span>
+                </div>
+                <div class="modal-meta-cell">
+                    <span class="modal-meta-label">Équipe</span>
+                    <span class="modal-meta-value">${project.teamSize}</span>
+                </div>
+            </div>
+
+            ${linksHTML ? `<div class="modal-actions">${linksHTML}</div>` : ''}
+
+            <!-- Galerie Multimédia -->
+            ${initialMedia ? `
+                <div class="modal-gallery">
+                    <h3 class="modal-section-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                        Illustrations & Vidéos
+                    </h3>
+                    <div class="gallery-display" id="gallery-display">
+                        ${renderMediaHTML(initialMedia)}
+                    </div>
+                    <p class="gallery-caption" id="gallery-caption">${initialMedia.caption || ''}</p>
+                    ${project.gallery.length > 1 ? `
+                        <div class="gallery-thumbnails" id="gallery-thumbnails">
+                            ${galleryThumbsHTML}
+                        </div>
+                    ` : ''}
+                </div>
+            ` : ''}
+
+            <!-- Histoire et rôle -->
+            ${storyHTML ? `
+                <div class="modal-story">
+                    <h3 class="modal-section-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                        L'Histoire du Projet & Mon Rôle
+                    </h3>
+                    <div class="modal-story-paragraphs">
+                        ${storyHTML}
+                    </div>
+                </div>
+            ` : ''}
+
+            <!-- Mécaniques de jeu -->
+            ${mechanicsHTML ? `
+                <div class="modal-mechanics">
+                    <h3 class="modal-section-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                        Mécaniques de Jeu Clés
+                    </h3>
+                    <div class="mechanics-grid">
+                        ${mechanicsHTML}
+                    </div>
+                </div>
+            ` : ''}
+
+            <!-- Technologies utilisées -->
+            ${techBadges ? `
+                <div class="modal-tech">
+                    <h3 class="modal-section-title">Technologies</h3>
+                    <div class="skills-tags">
+                        ${techBadges}
+                    </div>
+                </div>
+            ` : ''}
+        `;
+    }
+
+    /**
+     * Génère l'élément HTML Média (Vidéo WebM ou Image WebP/PNG)
+     */
+    function renderMediaHTML(media) {
+        if (media.type === "video") {
+            return `
+                <video controls autoplay loop muted playsinline poster="${media.poster || ''}">
+                    <source src="${media.src}" type="video/webm" />
+                    Votre navigateur ne prend pas en charge la lecture de vidéo WebM.
+                </video>
+            `;
+        }
+        return `<img src="${media.src}" alt="${media.caption || 'Capture d\'écran'}" />`;
+    }
+
+    /**
+     * Initialise la logique de sélection dans la galerie
+     */
+    function initGallery() {
+        const thumbnailsContainer = document.getElementById("gallery-thumbnails");
+        const displayContainer = document.getElementById("gallery-display");
+        const captionElem = document.getElementById("gallery-caption");
+
+        if (!thumbnailsContainer || !displayContainer) return;
+
+        // Écouteur de clic sur les vignettes
+        thumbnailsContainer.addEventListener("click", (e) => {
+            const btn = e.target.closest(".gallery-thumb");
+            if (!btn) return;
+
+            const index = parseInt(btn.dataset.mediaIndex, 10);
+            const currentHash = window.location.hash.replace("#", "");
+            const project = PROJECTS_DATA.find(p => p.id === currentHash);
+            if (!project || !project.gallery || !project.gallery[index]) return;
+
+            // Mise à jour de la classe active
+            thumbnailsContainer.querySelectorAll(".gallery-thumb").forEach(t => t.classList.remove("active"));
+            btn.classList.add("active");
+
+            // Remplacement du média principal
+            const media = project.gallery[index];
+            displayContainer.innerHTML = renderMediaHTML(media);
+            if (captionElem) {
+                captionElem.textContent = media.caption || "";
+            }
+        });
+    }
+
+    // --- GESTION DU MODAL CONTACT ---
+    const contactModal = document.getElementById("contact-modal");
+    const contactModalBackdrop = document.getElementById("contact-modal-backdrop");
+    const contactModalCloseBtn = document.getElementById("contact-modal-close-btn");
+    const navContactBtn = document.getElementById("nav-contact-btn");
+    const contactForm = document.getElementById("contact-form");
+    const contactStatusMsg = document.getElementById("contact-status-msg");
+
+    /**
+     * Ouvre le modal de contact
+     */
+    function openContactModal() {
+        if (!contactModal) return;
+        // Si le modal projet est ouvert, on le ferme d'abord
+        if (modal.classList.contains("active")) {
+            closeProjectModal();
+        }
+
+        contactModal.classList.add("active");
+        contactModal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("modal-open");
+
+        if (window.location.hash !== "#contact") {
+            history.pushState(null, "", "#contact");
+        }
+    }
+
+    /**
+     * Ferme le modal de contact
+     */
+    function closeContactModal() {
+        if (!contactModal) return;
+        contactModal.classList.remove("active");
+        contactModal.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("modal-open");
+
+        if (window.location.hash === "#contact") {
+            history.pushState("", document.title, window.location.pathname + window.location.search);
+        }
+    }
+
+    // Écouteurs de clics pour le modal de contact
+    if (navContactBtn) {
+        navContactBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            openContactModal();
+        });
+    }
+
+    if (contactModalCloseBtn) {
+        contactModalCloseBtn.addEventListener("click", closeContactModal);
+    }
+
+    if (contactModalBackdrop) {
+        contactModalBackdrop.addEventListener("click", closeContactModal);
+    }
+
+    // Soumission du formulaire de contact
+    if (contactForm) {
+        contactForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const nameInput = document.getElementById("contact-name");
+            const emailInput = document.getElementById("contact-email");
+            const subjectInput = document.getElementById("contact-subject");
+            const messageInput = document.getElementById("contact-message");
+
+            const name = nameInput ? nameInput.value.trim() : "";
+            const email = emailInput ? emailInput.value.trim() : "";
+            const subject = subjectInput ? subjectInput.value.trim() : "";
+            const message = messageInput ? messageInput.value.trim() : "";
+
+            if (!name || !email || !subject || !message) return;
+
+            // Adresse e-mail de réception d'Alexandre Babé
+            const recipient = "babealexandre409@gmail.com";
+            const mailtoSubject = encodeURIComponent(`[Portfolio] ${subject}`);
+            const mailtoBody = encodeURIComponent(`Bonjour Alexandre,\n\nNom: ${name}\nE-mail de contact: ${email}\n\nMessage:\n${message}`);
+            const mailtoUrl = `mailto:${recipient}?subject=${mailtoSubject}&body=${mailtoBody}`;
+
+            // Ouverture du client messagerie
+            window.location.href = mailtoUrl;
+
+            // Feedback visuel de succès
+            if (contactStatusMsg) {
+                contactStatusMsg.className = "contact-status-msg success";
+                contactStatusMsg.innerHTML = `✔ Merci <strong>${name}</strong> ! Votre logiciel de messagerie s'ouvre avec le message pré-rempli.<br>Si votre client mail ne s'ouvre pas automatiquement, vous pouvez envoyer votre message directement à <strong>${recipient}</strong>.`;
+            }
+
+            contactForm.reset();
+        });
+    }
+
+    // --- ÉCOUTEURS D'ÉVÉNEMENTS GÉNÉRAUX ---
+
+    // Écoute des clics sur les cartes de projets `.project-card`
+    document.querySelectorAll(".project-card").forEach(card => {
+        card.addEventListener("click", (e) => {
+            const projectId = card.dataset.projectId;
+            if (projectId) {
+                e.preventDefault();
+                openProjectModal(projectId);
+            }
+        });
+    });
+
+    // Clic sur le bouton de fermeture ✕ du projet
+    if (modalCloseBtn) {
+        modalCloseBtn.addEventListener("click", closeProjectModal);
+    }
+
+    // Clic sur le fond obscur (backdrop) du projet
+    if (modalBackdrop) {
+        modalBackdrop.addEventListener("click", closeProjectModal);
+    }
+
+    // Touche Échap pour fermer les modals
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+            if (modal.classList.contains("active")) {
+                closeProjectModal();
+            }
+            if (contactModal && contactModal.classList.contains("active")) {
+                closeContactModal();
+            }
+        }
+    });
+
+    // Vérification du deep-linking au chargement de la page et aux changements de hash
+    function checkURLHash() {
+        const hash = window.location.hash.replace("#", "");
+        if (!hash) return;
+
+        if (hash === "contact") {
+            openContactModal();
+            return;
+        }
+
+        if (typeof PROJECTS_DATA !== "undefined") {
+            const project = PROJECTS_DATA.find(p => p.id === hash);
+            if (project) {
+                openProjectModal(project.id);
+            }
+        }
+    }
+
+    checkURLHash();
+    window.addEventListener("hashchange", checkURLHash);
+});
+
