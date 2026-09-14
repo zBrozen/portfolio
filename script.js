@@ -325,40 +325,59 @@ document.addEventListener("DOMContentLoaded", () => {
         contactModalBackdrop.addEventListener("click", closeContactModal);
     }
 
-    // Soumission du formulaire de contact
+    // Soumission du formulaire de contact via Web3Forms
     if (contactForm) {
-        contactForm.addEventListener("submit", (e) => {
+        contactForm.addEventListener("submit", async (e) => {
             e.preventDefault();
 
-            const nameInput = document.getElementById("contact-name");
-            const emailInput = document.getElementById("contact-email");
-            const subjectInput = document.getElementById("contact-subject");
-            const messageInput = document.getElementById("contact-message");
+            const submitBtn = document.getElementById("contact-submit-btn");
+            const submitTextElem = submitBtn ? submitBtn.querySelector("span") : null;
+            const originalText = submitTextElem ? submitTextElem.textContent : "Envoyer le message";
 
-            const name = nameInput ? nameInput.value.trim() : "";
-            const email = emailInput ? emailInput.value.trim() : "";
-            const subject = subjectInput ? subjectInput.value.trim() : "";
-            const message = messageInput ? messageInput.value.trim() : "";
-
-            if (!name || !email || !subject || !message) return;
-
-            // Adresse e-mail de réception d'Alexandre Babé
-            const recipient = "babealexandre409@gmail.com";
-            const mailtoSubject = encodeURIComponent(`[Portfolio] ${subject}`);
-            const mailtoBody = encodeURIComponent(`Bonjour Alexandre,\n\nNom: ${name}\nE-mail de contact: ${email}\n\nMessage:\n${message}`);
-            const mailtoUrl = `mailto:${recipient}?subject=${mailtoSubject}&body=${mailtoBody}`;
-
-            // Ouverture du client messagerie
-            window.location.href = mailtoUrl;
-
-            // Feedback visuel de succès
-            if (contactStatusMsg) {
-                contactStatusMsg.className = "contact-status-msg success";
-                contactStatusMsg.innerHTML = `✔ Merci <strong>${name}</strong> ! Votre logiciel de messagerie s'ouvre avec le message pré-rempli.<br>Si votre client mail ne s'ouvre pas automatiquement, vous pouvez envoyer votre message directement à <strong>${recipient}</strong>.`;
+            // État visuel de chargement
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.style.opacity = "0.75";
+                if (submitTextElem) submitTextElem.textContent = "Envoi en cours...";
             }
 
-            contactForm.reset();
+            try {
+                const formData = new FormData(contactForm);
+                if (!formData.get("access_key")) {
+                    formData.append("access_key", "c32c38b8-83db-454d-ba90-82c8309731ba");
+                }
+
+                const response = await fetch("https://api.web3forms.com/submit", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    const senderName = formData.get("name") || "";
+                    const senderEmail = formData.get("email") || "";
+                    showContactStatus("success", `✔ <strong>Message envoyé avec succès !</strong><br>Merci ${senderName}, votre message a bien été transmis à Alexandre Babé. Une réponse vous sera envoyée à <strong>${senderEmail}</strong> dans les plus brefs délais.`);
+                    contactForm.reset();
+                } else {
+                    showContactStatus("error", `❌ Erreur : ${data.message || "Impossible d'envoyer le message pour le moment."}`);
+                }
+            } catch (error) {
+                showContactStatus("error", "❌ Une erreur de connexion est survenue. Veuillez vérifier votre réseau et réessayer.");
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.style.opacity = "1";
+                    if (submitTextElem) submitTextElem.textContent = originalText;
+                }
+            }
         });
+    }
+
+    function showContactStatus(type, htmlContent) {
+        if (!contactStatusMsg) return;
+        contactStatusMsg.className = `contact-status-msg ${type}`;
+        contactStatusMsg.innerHTML = htmlContent;
     }
 
     // --- ÉCOUTEURS D'ÉVÉNEMENTS GÉNÉRAUX ---
