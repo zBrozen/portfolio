@@ -155,6 +155,61 @@ const PROJECTS_DATA = [
                 src: "data/img/Vestige_Demo-ezgif.com-gif-to-webm-converter.webm",
                 poster: "data/img/Vestige_Demo_poster.jpg",
                 caption: "Démonstration vidéo : Aperçu du gameplay, des énigmes et de l'exploration."
+            },
+            {
+                type: "image",
+                src: "data/img/Gallery/Vestige1.png",
+                caption: "Aperçu visuel du projet Vestige."
+            },
+            {
+                type: "image",
+                src: "data/img/Gallery/Vestige2.png",
+                caption: "Aperçu visuel du projet Vestige."
+            },
+            {
+                type: "image",
+                src: "data/img/Gallery/Vestige3.png",
+                caption: "Aperçu visuel du projet Vestige."
+            },
+            {
+                type: "image",
+                src: "data/img/Gallery/Vestige4.png",
+                caption: "Aperçu visuel du projet Vestige."
+            },
+            {
+                type: "image",
+                src: "data/img/Gallery/Vestige5.png",
+                caption: "Aperçu visuel du projet Vestige."
+            },
+            {
+                type: "image",
+                src: "data/img/Gallery/Vestige6.png",
+                caption: "Aperçu visuel du projet Vestige."
+            },
+            {
+                type: "image",
+                src: "data/img/Gallery/Vestige7.png",
+                caption: "Aperçu visuel du projet Vestige."
+            },
+            {
+                type: "image",
+                src: "data/img/Gallery/Vestige8.png",
+                caption: "Aperçu visuel du projet Vestige."
+            },
+            {
+                type: "image",
+                src: "data/img/Gallery/Vestige9.png",
+                caption: "Aperçu visuel du projet Vestige."
+            },
+            {
+                type: "image",
+                src: "data/img/Gallery/Vestige10.png",
+                caption: "Aperçu visuel du projet Vestige."
+            },
+            {
+                type: "image",
+                src: "data/img/Gallery/Vestige11.png",
+                caption: "Aperçu visuel du projet Vestige."
             }
         ]
     },
