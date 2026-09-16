@@ -684,6 +684,12 @@ body.modal-open {
   transform: translateY(-2px);
 }
 
+.btn-project-link.itch:hover {
+  border-color: #fa5c5c;
+  color: #fa5c5c;
+  transform: translateY(-2px);
+}
+
 .btn-project-link.primary {
   background-color: var(--color-accent-2);
   color: #0d0d0f;
