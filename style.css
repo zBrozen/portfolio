@@ -739,6 +739,45 @@ body.modal-open {
   background-color: #000;
 }
 
+/* Boutons de navigation Flèches Galerie */
+.gallery-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(13, 13, 15, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all var(--duration) var(--ease);
+  opacity: 0.75;
+}
+
+.gallery-nav-btn:hover {
+  opacity: 1;
+  background-color: rgba(20, 20, 26, 0.95);
+  border-color: var(--color-accent-2);
+  color: var(--color-accent-2);
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 0 14px rgba(244, 179, 114, 0.3);
+}
+
+.gallery-nav-btn.prev {
+  left: 12px;
+}
+
+.gallery-nav-btn.next {
+  right: 12px;
+}
+
 .gallery-caption {
   font-size: 0.82rem;
   color: var(--color-text-muted);

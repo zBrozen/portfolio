@@ -180,6 +180,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     </h3>
                     <div class="gallery-display" id="gallery-display">
                         ${renderMediaHTML(initialMedia)}
+                        ${project.gallery && project.gallery.length > 1 ? `
+                            <button type="button" class="gallery-nav-btn prev" id="gallery-prev-btn" aria-label="Média précédent">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                            </button>
+                            <button type="button" class="gallery-nav-btn next" id="gallery-next-btn" aria-label="Média suivant">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                            </button>
+                        ` : ''}
                     </div>
                     <p class="gallery-caption" id="gallery-caption">${initialMedia.caption || ''}</p>
                     ${project.gallery.length > 1 ? `
@@ -244,36 +252,92 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
-     * Initialise la logique de sélection dans la galerie
+     * Initialise la logique de sélection et de navigation dans la galerie
      */
     function initGallery() {
         const thumbnailsContainer = document.getElementById("gallery-thumbnails");
         const displayContainer = document.getElementById("gallery-display");
         const captionElem = document.getElementById("gallery-caption");
 
-        if (!thumbnailsContainer || !displayContainer) return;
+        if (!displayContainer) return;
 
-        // Écouteur de clic sur les vignettes
-        thumbnailsContainer.addEventListener("click", (e) => {
-            const btn = e.target.closest(".gallery-thumb");
-            if (!btn) return;
+        const currentHash = window.location.hash.replace("#", "");
+        const project = PROJECTS_DATA.find(p => p.id === currentHash);
+        if (!project || !project.gallery || project.gallery.length === 0) return;
 
-            const index = parseInt(btn.dataset.mediaIndex, 10);
-            const currentHash = window.location.hash.replace("#", "");
-            const project = PROJECTS_DATA.find(p => p.id === currentHash);
-            if (!project || !project.gallery || !project.gallery[index]) return;
+        let currentIndex = 0;
 
-            // Mise à jour de la classe active
-            thumbnailsContainer.querySelectorAll(".gallery-thumb").forEach(t => t.classList.remove("active"));
-            btn.classList.add("active");
+        function updateGalleryMedia(index) {
+            if (index < 0) index = project.gallery.length - 1;
+            if (index >= project.gallery.length) index = 0;
+
+            currentIndex = index;
+            const media = project.gallery[currentIndex];
 
             // Remplacement du média principal
-            const media = project.gallery[index];
-            displayContainer.innerHTML = renderMediaHTML(media);
+            const mediaHTML = renderMediaHTML(media);
+            const navBtnsHTML = project.gallery.length > 1 ? `
+                <button type="button" class="gallery-nav-btn prev" id="gallery-prev-btn" aria-label="Média précédent">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <button type="button" class="gallery-nav-btn next" id="gallery-next-btn" aria-label="Média suivant">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+            ` : '';
+
+            displayContainer.innerHTML = mediaHTML + navBtnsHTML;
+
             if (captionElem) {
                 captionElem.textContent = media.caption || "";
             }
-        });
+
+            // Réattacher les événements sur les flèches de navigation
+            bindNavButtons();
+
+            // Mise à jour de la classe active et défilement fluide des vignettes
+            if (thumbnailsContainer) {
+                const thumbs = thumbnailsContainer.querySelectorAll(".gallery-thumb");
+                thumbs.forEach((t, i) => {
+                    if (i === currentIndex) {
+                        t.classList.add("active");
+                        t.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+                    } else {
+                        t.classList.remove("active");
+                    }
+                });
+            }
+        }
+
+        function bindNavButtons() {
+            const prevBtn = document.getElementById("gallery-prev-btn");
+            const nextBtn = document.getElementById("gallery-next-btn");
+            if (prevBtn) {
+                prevBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    updateGalleryMedia(currentIndex - 1);
+                };
+            }
+            if (nextBtn) {
+                nextBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    updateGalleryMedia(currentIndex + 1);
+                };
+            }
+        }
+
+        bindNavButtons();
+
+        // Écouteur de clic sur les vignettes
+        if (thumbnailsContainer) {
+            thumbnailsContainer.addEventListener("click", (e) => {
+                const btn = e.target.closest(".gallery-thumb");
+                if (!btn) return;
+                const index = parseInt(btn.dataset.mediaIndex, 10);
+                if (!isNaN(index)) {
+                    updateGalleryMedia(index);
+                }
+            });
+        }
     }
 
     // --- GESTION DU MODAL CONTACT ---
@@ -411,15 +475,21 @@ document.addEventListener("DOMContentLoaded", () => {
         modalBackdrop.addEventListener("click", closeProjectModal);
     }
 
-    // Touche Échap pour fermer les modals
+    // Touches du clavier (Échap pour fermer, Flèches Gauche/Droite pour naviguer dans la galerie)
     document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") {
-            if (modal.classList.contains("active")) {
+        if (modal && modal.classList.contains("active")) {
+            if (e.key === "Escape") {
                 closeProjectModal();
+            } else if (e.key === "ArrowLeft") {
+                const prevBtn = document.getElementById("gallery-prev-btn");
+                if (prevBtn) prevBtn.click();
+            } else if (e.key === "ArrowRight") {
+                const nextBtn = document.getElementById("gallery-next-btn");
+                if (nextBtn) nextBtn.click();
             }
-            if (contactModal && contactModal.classList.contains("active")) {
-                closeContactModal();
-            }
+        }
+        if (contactModal && contactModal.classList.contains("active") && e.key === "Escape") {
+            closeContactModal();
         }
     });
 
