@@ -397,5 +397,76 @@ const PROJECTS_DATA = [
                 caption: "Illustration du jeu ThermoClash."
             }
         ]
+    },
+    {
+        id: "daylia",
+        title: "Daylia",
+        tagline: "Un jeu sérieux dans le cadre d'un exercice de mon Master consistant à résoudre le problème de l'approche de l'IA dans l'entreprise d'Orange. Il est possible d'y faire différents exercice pour apprendre à utiliser l'IA tout en étant accompagné par un agent IA pour poser des questions et obtenir de l'aide.",
+        dimension: "2D",
+        teamSize: "5 personnes",
+        duration: "1 mois",
+        year: "2025",
+        tech: ["Unity", "C#", "IA", "Blender", "Photoshop"],
+        roles: ["Developer", "Game Designer", "Voice Actor"],
+        links: {
+            WebGL: "https://play.unity.com/en/games/72e69d93-f722-4e43-8971-2d1efe9c1ba4/builds"
+        },
+        story: [
+            "Daylia est un jeu sérieux en E-Learning dans le cadre d'un exercice de mon Master consistant à résoudre le problème de l'approche de l'IA dans l'entreprise d'Orange. Il est possible d'y faire différents exercice pour apprendre à utiliser l'IA tout en étant accompagné par un agent IA pour poser des questions et obtenir de l'aide."
+        ],
+        mechanics: [
+            {
+                title: "Apprentissage de l'IA",
+                desc: "Apprenez à utiliser l'IA tout en étant accompagné par un agent IA pour poser des questions et obtenir de l'aide.",
+                icon: "brush"
+            },
+            {
+                title: "IA",
+                desc: "L'agent IA est là pour vous aider tout au long du jeu en tant que mascotte (MALON).",
+                icon: "bot"
+            },
+            {
+                title: "Différents mini-jeux",
+                desc: "On y retrouve différents mini-jeux dans le but d'apprendre à utiliser l'IA.",
+                icon: "book-open"
+            }
+        ],
+        gallery: [
+            {
+                type: "image",
+                src: "data/img/Gallery/Daylia1.png",
+                caption: "Illustration du jeu Daylia."
+            },
+            {
+                type: "image",
+                src: "data/img/Gallery/Daylia2.png",
+                caption: "Illustration du jeu Daylia."
+            },
+            {
+                type: "image",
+                src: "data/img/Gallery/Daylia3.png",
+                caption: "Illustration du jeu Daylia."
+            },
+            {
+                type: "image",
+                src: "data/img/Gallery/Daylia4.png",
+                caption: "Illustration du jeu Daylia."
+            },
+            {
+                type: "image",
+                src: "data/img/Gallery/Daylia5.png",
+                caption: "Illustration du jeu Daylia."
+            },
+            {
+                type: "image",
+                src: "data/img/Gallery/Daylia6.png",
+                caption: "Illustration du jeu Daylia."
+            },
+            {
+                type: "image",
+                src: "data/img/Gallery/Daylia7.png",
+                caption: "Illustration du jeu Daylia."
+            }
+        ]
     }
 ];

@@ -144,6 +144,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     </a>
                 `;
             }
+            if (project.links.WebGL && project.links.WebGL !== "#") {
+                linksHTML += `
+                    <a href="${project.links.WebGL}" target="_blank" rel="noopener noreferrer" class="btn-project-link primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                        Jouer en WebGL
+                    </a>
+                `;
+            }
         }
 
         return `
