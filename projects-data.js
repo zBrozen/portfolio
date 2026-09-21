@@ -409,7 +409,7 @@ const PROJECTS_DATA = [
         tech: ["Unity", "C#", "IA", "Blender", "Photoshop"],
         roles: ["Developer", "Game Designer", "Voice Actor"],
         links: {
-            WebGL: "https://play.unity.com/en/games/72e69d93-f722-4e43-8971-2d1efe9c1ba4/builds"
+            WebGL: "https://play.unity.com/en/games/72e69d93-f722-4e43-8971-2d1efe9c1ba4/daylia-v1"
         },
         story: [
             "Daylia est un jeu sérieux en E-Learning dans le cadre d'un exercice de mon Master consistant à résoudre le problème de l'approche de l'IA dans l'entreprise d'Orange. Il est possible d'y faire différents exercice pour apprendre à utiliser l'IA tout en étant accompagné par un agent IA pour poser des questions et obtenir de l'aide."
