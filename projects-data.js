@@ -434,37 +434,37 @@ const PROJECTS_DATA = [
         gallery: [
             {
                 type: "image",
-                src: "data/img/Gallery/Daylia1.png",
+                src: "data/img/Gallery/DayLia1.png",
                 caption: "Illustration du jeu Daylia."
             },
             {
                 type: "image",
-                src: "data/img/Gallery/Daylia2.png",
+                src: "data/img/Gallery/DayLia2.png",
                 caption: "Illustration du jeu Daylia."
             },
             {
                 type: "image",
-                src: "data/img/Gallery/Daylia3.png",
+                src: "data/img/Gallery/DayLia3.png",
                 caption: "Illustration du jeu Daylia."
             },
             {
                 type: "image",
-                src: "data/img/Gallery/Daylia4.png",
+                src: "data/img/Gallery/DayLia4.png",
                 caption: "Illustration du jeu Daylia."
             },
             {
                 type: "image",
-                src: "data/img/Gallery/Daylia5.png",
+                src: "data/img/Gallery/DayLia5.png",
                 caption: "Illustration du jeu Daylia."
             },
             {
                 type: "image",
-                src: "data/img/Gallery/Daylia6.png",
+                src: "data/img/Gallery/DayLia6.png",
                 caption: "Illustration du jeu Daylia."
             },
             {
                 type: "image",
-                src: "data/img/Gallery/Daylia7.png",
+                src: "data/img/Gallery/DayLia7.png",
                 caption: "Illustration du jeu Daylia."
             }
         ]
